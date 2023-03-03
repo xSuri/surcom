@@ -1,0 +1,23 @@
+.body {
+    background-color: black;
+    height: 100%;
+    display: flex;
+}
+
+.body{
+    align-items: center;
+    justify-content: center;
+}
+
+.input {
+    font-size: 16px;
+    padding: 10px 15px;
+    width: 50%;
+    height: auto;
+    
+    background-color: #1b1e20;
+    color: white;
+
+    border-radius: 10px;
+    margin-bottom: 5%;
+}
