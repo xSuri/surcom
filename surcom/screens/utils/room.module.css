@@ -1,0 +1,104 @@
+.main {
+  box-sizing: border-box;
+  background-color: black;
+  height: 100%;
+}
+
+.body {
+  background-color: black;
+  background-size: cover;
+  background-position: center center;
+
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin: 0 0 50px;
+}
+
+.scroll{
+  width: 100%;
+}
+
+.chatContainer {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 25px;
+  overflow: hidden;
+  padding: 15px;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  /* margin-bottom: 35%; */
+}
+
+.message {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 35px;
+  position: relative;
+  margin-bottom: 4%;
+  max-width: 65%;
+  min-width: 28%;
+}
+
+.messageStyle {
+  color: black;
+}
+
+.left {
+  align-self: flex-start;
+  padding: 10px 25px 15px 20px;
+}
+
+.right {
+  align-self: flex-end;
+  padding: 10px 25px 15px 20px;
+}
+
+.name {
+  padding-bottom: 3px;
+  color: rgb(103, 100, 100);
+  width: 100%;
+}
+
+.adminColor {
+  color: red;
+}
+
+.text_input {
+  font-size: 16px;
+  padding: 10px 15px;
+  width: 80%;
+  background-color: #232323;
+  color: white;
+  border-radius: 20px;
+}
+
+.bottom{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.content{
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.image_picker{
+  width: 10%;
+  margin-left: 2%;
+  justify-content: center;
+}
