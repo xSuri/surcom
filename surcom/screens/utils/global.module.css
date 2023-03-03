@@ -1,0 +1,76 @@
+.screenContainer {
+  flex: 1;
+  justify-content: center;
+  padding: 80px;
+  background-color: black;
+}
+
+.appButton {
+  padding: 12px;
+}
+
+.appButtonText {
+  font-size: 17px;
+  color: white;
+}
+
+.appButtonContainer {
+  padding: 10px;
+}
+
+.textBlack {
+  color: black;
+}
+
+.textWhite {
+  color: white;
+}
+
+.headerText{
+  font-size: 24px;
+  color: white;
+  margin-bottom: 6%;
+}
+
+.biggerText{
+  font-size: 24px;
+  color: white;
+  text-align: center;
+}
+
+.signIn{
+  color: white;
+}
+
+.input {
+  font-size: 16px;
+  padding: 10px 15px;
+  width: 40%;
+  background-color: white;
+  color: black;
+  border-radius: 10px;
+  margin-bottom: 5%;
+}
+
+.view {
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.body {
+  background-color: black;
+  height: 100%;
+}
+
+.addingRoomButton{
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 70px;
+}
+
+.rooms{
+  top: 8%;
+  position: relative;
+}
