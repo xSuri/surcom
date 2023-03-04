@@ -23,7 +23,6 @@
     "react-native-alert-notification": "^0.3.4",
     "react-native-async-storage": "^0.0.1",
     "react-native-css-transformer": "^1.2.4",
-    "react-native-floating-bubble": "^1.0.12",
     "react-native-gesture-handler": "^2.8.0",
     "react-native-image-picker": "^5.1.0",
     "react-native-local-storage": "^1.5.2",
