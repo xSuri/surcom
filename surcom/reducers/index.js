@@ -1,3 +1,5 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const initialState = {
     isSignout: true,
     nick: '',
@@ -9,6 +11,7 @@ const ACTION_TYPES = {
     SIGN_IN: 'SIGN_IN',
     SIGN_OUT: 'SIGN_OUT',
     ADDING_ROOM: 'ADDING_ROOM',
+    UPDATE_ROOMS_ON_LOAD: 'UPDATE_ROOMS_ON_LOAD',
     UPDATE_ROLE: 'UPDATE_ROLE'
 }
 
@@ -26,9 +29,16 @@ export default function reducer(state = initialState, action) {
                 isSignout: true,
             };
         case ACTION_TYPES.ADDING_ROOM:
+            AsyncStorage.setItem('@rooms', JSON.stringify([...state.rooms, action.room]));
+
             return {
                 ...state,
                 rooms: [...state.rooms, action.room]
+            };
+        case ACTION_TYPES.UPDATE_ROOMS_ON_LOAD:
+            return {
+                ...state,
+                rooms: [...state.rooms, ...action.rooms]
             };
         case ACTION_TYPES.UPDATE_ROLE:
             return {
@@ -52,6 +62,11 @@ export const signOut = () => ({
 export const addingRoom = room => ({
     type: ACTION_TYPES.ADDING_ROOM,
     room
+});
+
+export const updateRoomsOnLoad = rooms => ({
+    type: ACTION_TYPES.UPDATE_ROOMS_ON_LOAD,
+    rooms
 });
 
 export const updateRoles = role => ({

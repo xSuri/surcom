@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
-import { Text, View } from 'react-native';
+import { Text, View, Image } from 'react-native';
 import { IconButton } from './utils/button';
 import style from './utils/global.module.css';
 import AddingRoomModal from './modals/Add-Register-Room';
@@ -10,7 +10,7 @@ import { IP } from './utils/const';
 
 const io = require('socket.io-client');
 
-function HomePage({ navigation, rooms }) {
+function HomePage({ navigation, rooms, state }) {
     const [socket, setSocket] = useState('');
     const [roomModalIsOpen, setRoomModalIsOpen] = useState(false);
 
@@ -28,6 +28,7 @@ function HomePage({ navigation, rooms }) {
         )
     }
 
+
     return (
         <>
             <View style={style.body}>
@@ -44,7 +45,10 @@ function HomePage({ navigation, rooms }) {
                     </View>
                 </View>
 
-                <Text style={style.biggerText}>Rooms</Text>
+                <Image
+                    style={style.logo}
+                    source={require('../../surcom/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png')}
+                />
 
                 <View style={style.rooms}>
                     <IconButton
@@ -65,7 +69,7 @@ function HomePage({ navigation, rooms }) {
                         rooms && rooms.length > 0 ? rooms.map(room => (
                             <IconButton
                                 key={room}
-                                icon="globe"
+                                icon="comment"
                                 title={room}
                                 backgroundColor="black"
                                 color="white"
@@ -88,7 +92,8 @@ function HomePage({ navigation, rooms }) {
 }
 
 const mapStateToProps = state => ({
-    rooms: state.user.rooms
+    rooms: state.user.rooms,
+    state: state
 });
 
 export default connect(
