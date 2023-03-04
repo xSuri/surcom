@@ -4,19 +4,25 @@ import { View } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { signIn as signInAction } from '../reducers/index';
+import { signIn as signInAction, updateRoomsOnLoad as updateRoomsOnLoadAction } from '../reducers/index';
 
 import { IconButton } from './utils/button';
 import style from './utils/global.module.css';
 
-function Main({ navigation, signIn }) {
+function Main({ navigation, signIn, updateRoomsOnLoad }) {
     const [isUnlocked, setUnlock] = useState(true);
 
     useEffect(() => {
         setUnlock(false);
 
+        AsyncStorage.getItem('@rooms').then(rooms => {
+            if (rooms && rooms.length > 0) {
+                updateRoomsOnLoad(JSON.parse(rooms));
+            }
+        });
+
         AsyncStorage.getItem('@nick')
-            .then((nick) => {
+            .then(nick => {
                 if (nick && nick.length > 0) {
                     signIn(nick);
                 }
@@ -24,11 +30,6 @@ function Main({ navigation, signIn }) {
             })
             .catch(() => setUnlock(true));
 
-        // AsyncStorage.getItem('@rooms').then((rooms) => {
-        //     if(rooms && rooms.length > 0){
-        //         signIn(rooms);
-        //     }
-        // })
     }, [])
 
     return (
@@ -61,7 +62,8 @@ function Main({ navigation, signIn }) {
 }
 
 const mapDispatchToProps = {
-    signIn: signInAction
+    signIn: signInAction,
+    updateRoomsOnLoad: updateRoomsOnLoadAction
 };
 
 export default connect(

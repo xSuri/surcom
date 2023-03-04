@@ -32,10 +32,12 @@
   margin-bottom: 6%;
 }
 
-.biggerText{
-  font-size: 24px;
-  color: white;
-  text-align: center;
+.logo{
+  width: 30;
+  height: 30;
+  margin-left: 10;
+  margin-top: 10;
+  text-align: left;
 }
 
 .signIn{
