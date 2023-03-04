@@ -1,4 +1,4 @@
-export const IP = ''; // update
+export const IP = '';
 export const API_URL = `http://${IP}:3000/api`;
 export const API_URLS = {
     'login': '/login',

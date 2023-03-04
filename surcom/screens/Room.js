@@ -13,7 +13,7 @@ import {
 
 import { API_URL } from './utils/const';
 
-import { launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 LogBox.ignoreLogs([
@@ -99,23 +99,21 @@ const Room = ({ navigation, route, store }) => {
                         {
                             inputIsActive ? null : (
                                 <>
-                                    <View style={style.image_picker}>
+                                    <View style={style.icons}>
                                         <Icon
-                                            name='image'
+                                            name='camera'
                                             size={20}
                                             color='white'
-                                            onPress={() => launchImageLibrary({selectionLimit: 0}).then(data => console.log(data))}
+                                            onPress={() => launchCamera().then(data => console.log(data))}
                                         />
                                     </View>
 
-
-                                    <View style={style.image_picker}>
+                                    <View style={style.icons}>
                                         <Icon
                                             name='image'
                                             size={20}
                                             color='white'
-                                        // style={style.image_picker}
-                                        // onClick={() => launchImageLibrary()}
+                                            onPress={() => launchImageLibrary({ selectionLimit: 0 }).then(data => console.log(data))}
                                         />
                                     </View>
                                 </>
@@ -138,13 +136,12 @@ const Room = ({ navigation, route, store }) => {
                             selectTextOnFocus={true}
                         />
 
-                        <View style={style.image_picker}>
+                        <View style={style.icons}>
                             <Icon
-                                name='image'
+                                name={inputIsActive ? 'chevron-left' : 'chevron-right'}
                                 size={20}
                                 color='white'
-                            // style={style.image_picker}
-                            // onClick={() => launchImageLibrary()}
+                                onPress={() => setInputIsActive(!inputIsActive)}
                             />
                         </View>
                     </View>

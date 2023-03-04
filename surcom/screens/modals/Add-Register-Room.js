@@ -11,6 +11,7 @@ import { API_URL } from '../utils/const';
 
 import { IconButton } from '../utils/button';
 
+
 function AddingRoomModal({ toggleRoomModal, socket, store, addingRoom }) {
     const [roomName, setRoomName] = useState('');
     const [roomPin, setRoomPin] = useState('');
@@ -39,7 +40,7 @@ function AddingRoomModal({ toggleRoomModal, socket, store, addingRoom }) {
                 icon="sign-in"
                 title="Create / Auth"
                 backgroundColor="#fff"
-                additionalStyleClass={{color: 'black'}}
+                additionalStyleClass={{ color: 'black' }}
                 imageColor="black"
                 onPress={() => createNewRoom(roomName, roomPin, addingRoom, store, toggleRoomModal)}
             />
