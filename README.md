@@ -1,4 +1,4 @@
-# SURCOM
+# SURCOM - Develop
 
 # PL
 Prosty komunikator napisany w react-native z backendem postawionym na nodejs. W zamyśle ma przechowywać jak najmniej informacji o tym co ktoś pisze/wysyła. Rzeczy te przechowywane są w pamięci i automatycznie usuwane po cyklicznym restarcie serwera. Projekt na razie jest w fazie alpha i wiele rzeczy trzeba dodać do stałych, lub exportowac na osobne pliki. Projekt reazlizowany w wolnym czasie dla "resetu mózgu" - jak wiele innych. Ten projekt jest jedynym, który odważyłem się udostępnić.Prosty komunikator napisany w react-native z backendem postawionym na nodejs. W zamyśle ma przechowywać jak najmniej informacji o tym co ktoś pisze/wysyła. Rzeczy te przechowywane są w pamięci i automatycznie usuwane po cyklicznym restarcie serwera. Projekt na razie jest w fazie alpha i wiele rzeczy trzeba dodać do stałych, lub exportowac na osobne pliki. Projekt reazlizowany w wolnym czasie dla "resetu mózgu" - jak wiele innych. Ten projekt jest jedynym, który odważyłem się udostępnić.  
