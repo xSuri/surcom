@@ -1,13 +1,16 @@
+import style from './utils/global.module.css';
+
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { SCREEN_ROUTES } from './utils/const';
+import { IconButton } from './utils/button';
+
 import { signIn as signInAction, updateRoomsOnLoad as updateRoomsOnLoadAction } from '../reducers/index';
 
-import { IconButton } from './utils/button';
-import style from './utils/global.module.css';
 
 function Main({ navigation, signIn, updateRoomsOnLoad }) {
     const [isUnlocked, setUnlock] = useState(true);
@@ -42,7 +45,7 @@ function Main({ navigation, signIn, updateRoomsOnLoad }) {
                     backgroundColor="white"
                     additionalStyleClass={style.textBlack}
                     imageColor="black"
-                    onPress={() => navigation.navigate('Login')}
+                    onPress={() => navigation.navigate(SCREEN_ROUTES['screen:panel:login'])}
                     editable={isUnlocked}
                     selectTextOnFocus={isUnlocked}
                 />
@@ -51,7 +54,7 @@ function Main({ navigation, signIn, updateRoomsOnLoad }) {
                     icon="user"
                     title="Register"
                     backgroundColor="#777"
-                    onPress={() => navigation.navigate('Register')}
+                    onPress={() => navigation.navigate(SCREEN_ROUTES['screen:panel:register'])}
                     editable={isUnlocked}
                     selectTextOnFocus={isUnlocked}
                 />

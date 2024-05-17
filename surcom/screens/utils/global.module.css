@@ -76,3 +76,13 @@
   top: 8%;
   position: relative;
 }
+
+.additionalRooms{
+  display: flex;
+  flex-direction: row;
+}
+
+.dropdown{
+  position: absolute;
+  right: 0;
+}

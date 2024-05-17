@@ -1,16 +1,18 @@
+import style from './utils/global.module.css';
+
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { Text, Button, TextInput, StyleSheet, View } from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 import { IconButton } from './utils/button';
 import showAlert, { ALERT_TYPES } from './utils/alert';
-import style from './utils/global.module.css';
 
 import { API_URL, API_URLS, STATUTS, SCREEN_ROUTES } from './utils/const';
 
 import { signIn as signInAction } from '../reducers/index';
+import { put } from './utils/network';
 
 
 function RegisterPage({ navigation, signIn }) {
@@ -127,29 +129,16 @@ function RegisterPage({ navigation, signIn }) {
 }
 
 function register({ nick, pin }) {
-    return fetch(API_URL + API_URLS['register'], {
-        headers: {
-            "Content-Type": "application/json"
-        },
-        method: 'PUT',
+    return put({
+        url: API_URL + API_URLS['register'],
         body: JSON.stringify(
             {
                 nick: nick,
                 pin: pin
             }
-        )
+        ),
     });
-}
-
-const styles = StyleSheet.create({
-    view: {
-        flex: 1,
-        backgroundColor: 'white',
-        color: 'black',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-});
+};
 
 const mapDispatchToProps = {
     signIn: signInAction

@@ -1,0 +1,8 @@
+.dropdown{
+    display: flex;
+    flex-direction: column;
+}
+
+.ellipsis{
+    align-items: flex-end;
+}
