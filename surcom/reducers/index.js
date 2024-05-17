@@ -10,9 +10,10 @@ const initialState = {
 const ACTION_TYPES = {
     SIGN_IN: 'SIGN_IN',
     SIGN_OUT: 'SIGN_OUT',
-    ADDING_ROOM: 'ADDING_ROOM',
+    ADD_ROOM: 'ADD_ROOM',
     UPDATE_ROOMS_ON_LOAD: 'UPDATE_ROOMS_ON_LOAD',
-    UPDATE_ROLE: 'UPDATE_ROLE'
+    UPDATE_ROLE: 'UPDATE_ROLE',
+    DELETE_ROOM: 'DELETE_ROOM',
 }
 
 export default function reducer(state = initialState, action) {
@@ -23,28 +24,42 @@ export default function reducer(state = initialState, action) {
                 isSignout: false,
                 nick: action.nick
             };
+
         case ACTION_TYPES.SIGN_OUT:
             return {
                 ...state,
                 isSignout: true,
             };
-        case ACTION_TYPES.ADDING_ROOM:
+            
+        case ACTION_TYPES.ADD_ROOM:
             AsyncStorage.setItem('@rooms', JSON.stringify([...state.rooms, action.room]));
 
             return {
                 ...state,
                 rooms: [...state.rooms, action.room]
             };
+
+        case ACTION_TYPES.DELETE_ROOM:
+            const new_rooms = [...state.rooms].filter(room => room !== action.room)
+            AsyncStorage.setItem('@rooms', JSON.stringify(new_rooms));
+
+            return {
+                ...state,
+                rooms: new_rooms
+            };
+
         case ACTION_TYPES.UPDATE_ROOMS_ON_LOAD:
             return {
                 ...state,
                 rooms: [...state.rooms, ...action.rooms]
             };
+
         case ACTION_TYPES.UPDATE_ROLE:
             return {
                 ...state,
                 role: action.role
             };
+
         default:
             return state;
     }
@@ -59,8 +74,13 @@ export const signOut = () => ({
     type: ACTION_TYPES.SIGN_OUT
 });
 
-export const addingRoom = room => ({
-    type: ACTION_TYPES.ADDING_ROOM,
+export const addRoom = room => ({
+    type: ACTION_TYPES.ADD_ROOM,
+    room
+});
+
+export const deleteRoom = room => ({
+    type: ACTION_TYPES.DELETE_ROOM,
     room
 });
 

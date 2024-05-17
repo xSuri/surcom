@@ -1,6 +1,7 @@
+import style from './global.module.css';
+
 import { Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import style from '../utils/global.module.css';
 
 export const IconButton = ({ onPress, icon, title, backgroundColor, imageColor, additionalStyleClass, editable, selectTextOnFocus }) => (
     <View style={style.appButtonContainer}>

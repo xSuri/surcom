@@ -1,32 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
-import { Text, View, Image } from 'react-native';
+import { Text, View, Image, TouchableWithoutFeedback } from 'react-native';
 import { IconButton } from './utils/button';
 import style from './utils/global.module.css';
 import AddingRoomModal from './modals/Add-Register-Room';
+import DropdownPicker from './utils/dropdown-picker';
 
-import { IP } from './utils/const';
+import { SOCKET_URL } from './utils/const';
+
+import { deleteRoom as deleteRoomAction } from '../reducers/index';
 
 const io = require('socket.io-client');
 
-function HomePage({ navigation, rooms, state }) {
+function HomePage({ navigation, rooms, state, deleteRoom }) {
     const [socket, setSocket] = useState('');
     const [roomModalIsOpen, setRoomModalIsOpen] = useState(false);
 
-    useEffect(() => {
-        setSocket(io(`ws://${IP}:4242`));
-    }, [])
+    useEffect(() => setSocket(io(SOCKET_URL)), []);
 
-    const toggleRoomModal = () => {
-        setRoomModalIsOpen(!roomModalIsOpen);
-    }
+    const toggleRoomModal = () => setRoomModalIsOpen(!roomModalIsOpen);
 
-    if (roomModalIsOpen) {
-        return (
-            <AddingRoomModal toggleRoomModal={toggleRoomModal} socket={socket} />
-        )
-    }
+    if (roomModalIsOpen) return (
+        <AddingRoomModal navigation={navigation} toggleRoomModal={toggleRoomModal} socket={socket} />
+    );
 
 
     return (
@@ -45,10 +42,15 @@ function HomePage({ navigation, rooms, state }) {
                     </View>
                 </View>
 
-                <Image
-                    style={style.logo}
-                    source={require('../../surcom/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png')}
-                />
+                <TouchableWithoutFeedback
+                    onPress={() => navigation.navigate('Settings')}
+                >
+                    <Image
+                        style={style.logo}
+                        source={require('./public/image/logo.png')}
+                    />
+                </TouchableWithoutFeedback>
+
 
                 <View style={style.rooms}>
                     <IconButton
@@ -67,20 +69,38 @@ function HomePage({ navigation, rooms, state }) {
 
                     {
                         rooms && rooms.length > 0 ? rooms.map(room => (
-                            <IconButton
-                                key={room}
-                                icon="comment"
-                                title={room}
-                                backgroundColor="black"
-                                color="white"
-                                additionalStyleClass={style.textWhite}
-                                onPress={() => {
-                                    navigation.navigate('Room', {
-                                        socket,
-                                        roomName: room,
-                                    })
-                                }}
-                            />
+                            <View key={room} style={style.additionalRooms}>
+                                <IconButton
+                                    icon="comment"
+                                    title={room}
+                                    backgroundColor="black"
+                                    color="white"
+                                    additionalStyleClass={style.textWhite}
+                                    onPress={() => {
+                                        navigation.navigate('Room', {
+                                            socket,
+                                            roomName: room,
+                                        })
+                                    }}
+                                />
+
+                                <View style={style.dropdown}>
+                                    <DropdownPicker
+                                        items={[{ label: 'Delete Room', value: 'delete' }]}
+                                        // TO CHANGE
+                                        // VALUES VIOLET
+                                        choosedValue={(value) => {
+                                            if (value === 'delete') {
+                                                deleteRoom(room)
+                                            }
+                                        }}
+                                    />
+                                </View>
+
+                                {/* STYLIZACJA DELETE */}
+                                {/* https://hossein-zare.github.io/react-native-dropdown-picker-website/docs/advanced/list-modes */}
+                            </View>
+
                         )) : null
                     }
                 </View>
@@ -96,6 +116,11 @@ const mapStateToProps = state => ({
     state: state
 });
 
+const mapDispatchToProps = {
+    deleteRoom: deleteRoomAction
+};
+
 export default connect(
     mapStateToProps,
+    mapDispatchToProps
 )(HomePage);
