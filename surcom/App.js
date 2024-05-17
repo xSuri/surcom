@@ -11,6 +11,10 @@ import LoginPage from './screens/Login';
 import RegisterPage from './screens/Register';
 import HomePage from './screens/Home';
 import Room from './screens/Room';
+import Settings from './screens/modals/Settings';
+import UserInfo from './screens/modals/User-Info';
+import ImageSend from './screens/modals/Image-Send';
+import ImageShower from './screens/modals/Image-Shower';
 
 const Stack = createStackNavigator();
 
@@ -19,9 +23,9 @@ const App = ({ store }) => {
         <AlertNotificationRoot>
             <NavigationContainer>
                 <Stack.Navigator
-                  screenOptions={{
-                    headerShown: false
-                  }}
+                    screenOptions={{
+                        headerShown: false
+                    }}
                 >
                     {
                         store.isSignout ? (
@@ -92,6 +96,66 @@ const App = ({ store }) => {
                                 <Stack.Screen
                                     name="Room"
                                     component={Room}
+                                    options={{
+                                        title: '',
+                                        headerStyle: {
+                                            backgroundColor: 'black',
+                                        },
+                                        headerTintColor: '#fff',
+                                        headerTitleStyle: {
+                                            fontWeight: 'bold',
+                                        },
+                                    }}
+                                />
+
+                                <Stack.Screen
+                                    name="Settings"
+                                    component={Settings}
+                                    options={{
+                                        title: '',
+                                        headerStyle: {
+                                            backgroundColor: 'black',
+                                        },
+                                        headerTintColor: '#fff',
+                                        headerTitleStyle: {
+                                            fontWeight: 'bold',
+                                        },
+                                    }}
+                                />
+
+                                <Stack.Screen
+                                    name="UserInfo"
+                                    component={UserInfo}
+                                    options={{
+                                        title: '',
+                                        headerStyle: {
+                                            backgroundColor: 'black',
+                                        },
+                                        headerTintColor: '#fff',
+                                        headerTitleStyle: {
+                                            fontWeight: 'bold',
+                                        },
+                                    }}
+                                />
+
+                                <Stack.Screen
+                                    name="ImageSend"
+                                    component={ImageSend}
+                                    options={{
+                                        title: '',
+                                        headerStyle: {
+                                            backgroundColor: 'black',
+                                        },
+                                        headerTintColor: '#fff',
+                                        headerTitleStyle: {
+                                            fontWeight: 'bold',
+                                        },
+                                    }}
+                                />
+
+                                <Stack.Screen
+                                    name="ImageShower"
+                                    component={ImageShower}
                                     options={{
                                         title: '',
                                         headerStyle: {

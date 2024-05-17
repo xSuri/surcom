@@ -1,5 +1,6 @@
-export const IP = '';
+export const IP = '192.168.195.228';
 export const API_URL = `http://${IP}:3000/api`;
+export const SOCKET_URL = `ws://${IP}:4242`;
 export const API_URLS = {
     'login': '/login',
     'register': '/register',

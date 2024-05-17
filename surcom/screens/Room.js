@@ -1,20 +1,23 @@
+import style from './utils/room.module.css';
+
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
-
-import style from './utils/room.module.css';
 
 import {
     Text,
     View,
     TextInput,
     LogBox,
-    FlatList
+    FlatList,
+    Pressable
 } from 'react-native';
 
 import { API_URL } from './utils/const';
 
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import showAlert, { ALERT_TYPES } from './utils/alert';
+import LoadingSkeleton from './utils/loading';
 
 LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
@@ -22,14 +25,16 @@ LogBox.ignoreLogs([
 
 const Room = ({ navigation, route, store }) => {
     const [inputIsActive, setInputIsActive] = useState(false);
+    const [messagesIsFetched, setNewMessagesIsFetched] = useState(false);
 
     const [messages, setMessages] = useState([]);
-    const [items, setItems] = useState(10);
+    const [items, setItems] = useState(15);
     const [newMessage, setNewMessage] = useState('');
 
     const { socket, roomName } = route.params;
 
     const flatList = useRef();
+    const input = useRef();
 
     useEffect(() => {
         fetch(API_URL + '/room/getAllMessages', {
@@ -46,7 +51,16 @@ const Room = ({ navigation, route, store }) => {
         })
             .then(response => response.json())
             .then(jsonData => setMessages(jsonData))
-            .catch(err => console.log(err));
+            .catch(err => {
+                navigation.navigate('Home');
+
+                showAlert({
+                    alertType: ALERT_TYPES.DANGER,
+                    alertTitle: 'Error!',
+                    alertBody: 'Something went wrong! (Please try again later -> Network Problem)',
+                });
+            })
+            .finally(() => messagesIsFetched ? null : setNewMessagesIsFetched(true));
 
     }, [items])
 
@@ -57,11 +71,10 @@ const Room = ({ navigation, route, store }) => {
     handleScroll = (event) => {
         const { contentOffset } = event.nativeEvent;
 
-        if (contentOffset.y < 0.5) {
-            setItems(items + 10);
-        }
+        // if (contentOffset.y < 0.15) {
+        //     setItems(items + 10);
+        // }
     }
-    //ograniczenie
 
     return (
         <>
@@ -69,23 +82,29 @@ const Room = ({ navigation, route, store }) => {
                 <View style={style.body}>
                     <View style={style.chatContainer}>
                         <View style={style.chat}>
-                            <FlatList
-                                style={style.scroll}
-                                showsVerticalScrollIndicator={false}
-                                showsHorizontalScrollIndicator={false}
-                                data={messages}
-                                ref={flatList}
-                                onContentSizeChange={() => flatList.current.scrollToEnd()}
-                                onScroll={handleScroll}
-                                renderItem={({ item }) => (
-                                    <ChatMessage
-                                        key={item.id}
-                                        userNick={store.nick}
-                                        messageNick={item.nick}
-                                        message={item.message}
+                            {
+                                messagesIsFetched ? (
+                                    <FlatList
+                                        style={style.scroll}
+                                        showsVerticalScrollIndicator={false}
+                                        showsHorizontalScrollIndicator={false}
+                                        data={messages}
+                                        ref={flatList}
+                                        onContentSizeChange={() => flatList.current.scrollToEnd()}
+                                        onScroll={handleScroll}
+                                        renderItem={({ item }) => (
+                                            <ChatMessage
+                                                key={item.id}
+                                                navigation={navigation}
+                                                userNick={store.nick}
+                                                item={item}
+                                                room={roomName}
+                                            />
+                                        )}
                                     />
-                                )}
-                            />
+
+                                ) : <LoadingSkeleton />
+                            }
 
                         </View>
                     </View>
@@ -104,7 +123,7 @@ const Room = ({ navigation, route, store }) => {
                                             name='camera'
                                             size={20}
                                             color='white'
-                                            onPress={() => launchCamera().then(data => console.log(data))}
+                                            onPress={() => launchCamera()}
                                         />
                                     </View>
 
@@ -113,7 +132,16 @@ const Room = ({ navigation, route, store }) => {
                                             name='image'
                                             size={20}
                                             color='white'
-                                            onPress={() => launchImageLibrary({ selectionLimit: 0 }).then(data => console.log(data))}
+                                            onPress={() => launchImageLibrary({ selectionLimit: 1, includeBase64: true, maxWidth: 1920, maxHeight: 1080 }).then(data => {
+                                                navigation.navigate('ImageSend', {
+                                                    message: newMessage,
+                                                    dataImage: data,
+                                                    store,
+                                                    navigation,
+                                                    room: roomName
+                                                });
+                                            })
+                                            }
                                         />
                                     </View>
                                 </>
@@ -124,16 +152,21 @@ const Room = ({ navigation, route, store }) => {
                         <TextInput
                             onChangeText={(text) => setNewMessage(text)}
                             onSubmitEditing={() => {
-                                sendNewMessage(socket, roomName, store.nick, newMessage);
+                                if (newMessage.length > 0 && newMessage.trim().length > 0) {
+                                    sendNewMessage(socket, roomName, store.nick, newMessage);
+                                }
                                 setNewMessage('');
-                                setInputIsActive(false);
+
+                                input.current.focus()
                             }}
                             onPressIn={() => setInputIsActive(true)}
                             value={newMessage}
+                            ref={input}
                             placeholder="Write Your Message!"
                             style={[style.text_input, inputIsActive ? { width: '90%' } : { width: '66%' }]}
                             editable={true}
-                            selectTextOnFocus={true}
+                            blurOnSubmit={false}
+                            onEndEditing={() => setInputIsActive(false)}
                         />
 
                         <View style={style.icons}>
@@ -144,48 +177,65 @@ const Room = ({ navigation, route, store }) => {
                                 onPress={() => setInputIsActive(!inputIsActive)}
                             />
                         </View>
+
                     </View>
 
                 </View>
-                {/* name='chevron-left' */}
 
-
-                {/* <button
-                    onClick={() => sendNewImage(socket, roomName, store.nick, newImage)}
-                > */}
-                {/*IKONKA  */}
-                {/* </button> */}
-
-
-                {/* IKONKA DO KLIKNIECIA
-                    ONCLICK => zdjecie do base64 i wyslanie wiadomosci z tagiem <?image>
-                */}
             </View>
         </>
     );
 };
 
-function ChatMessage({ messageNick, message, userNick }) {
+function ChatMessage({ userNick, navigation, item }) {
+    const messageNick = item.nick;
+    const message = item.message;
+    const isImage = item.isImage;
+
+    if (isImage) {
+        const image = item.image;
+        return (
+            <Pressable
+                onLongPress={() => navigation.navigate('ImageShower', {image})}
+            >
+                <View style={[style.message, style.left]}>
+                    <View style={style.userInfo}>
+                        <Text style={style.name}>{messageNick}</Text>
+                    </View>
+
+                    <Text style={style.messageStyle}>Hold Here To See Image!</Text>
+                </View>
+            </Pressable>
+        )
+    }
+
     if (messageNick === userNick) {
         return (
-            <View style={[style.message, style.right]}>
-                <View style={style.userInfo}>
-                    <Text style={style.name}>{messageNick}</Text>
-                </View>
+            <Pressable
+                onLongPress={() => navigation.navigate('UserInfo', { messageNick })}
+            >
+                <View style={[style.message, style.right]}>
+                    <View style={style.userInfo}>
+                        <Text style={style.name}>{messageNick}</Text>
+                    </View>
 
-                <Text style={style.messageStyle}>{message}</Text>
-            </View>
+                    <Text style={style.messageStyle}>{message}</Text>
+                </View>
+            </Pressable>
         )
     }
     else {
         return (
-            <View style={[style.message, style.left]}>
-                <View style={style.userInfo}>
-                    <Text style={style.name}>{messageNick}</Text>
+            <Pressable onLongPress={() => navigation.navigate('UserInfo', { messageNick })}>
+                <View style={[style.message, style.left]}>
+                    <View style={style.userInfo}>
+                        <Text style={style.name}>{messageNick}</Text>
+                    </View>
+
+                    <Text style={style.messageStyle}>{message}</Text>
                 </View>
 
-                <Text style={style.messageStyle}>{message}</Text>
-            </View>
+            </Pressable>
         )
     }
 }
@@ -194,19 +244,11 @@ function sendNewMessage(socket, room, nick, message) {
     socket.emit(room,
         JSON.stringify({
             nick,
-            message
+            message,
+            isImage: false
         })
     );
 }
-
-// function sendNewMessage(socket, room, nick, message) {
-//     socket.emit(room,
-//         JSON.stringify({
-//             nick,
-//             image: imagebase64
-//         })
-//     );
-// }
 
 const mapStateToProps = state => ({
     store: state.user
