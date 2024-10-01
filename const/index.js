@@ -17,8 +17,6 @@ let id = 1;
 let rooms = [];
 const MESSAGES = {
     'GlobalChat': [],
-    // !
-    'Test': []
 };
 
 const getId = () => id;

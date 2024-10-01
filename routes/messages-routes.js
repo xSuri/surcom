@@ -74,17 +74,6 @@ function slicedArray(room, amountOfRecords) {
     return MESSAGES[room].slice(Math.max(MESSAGES[room].length - amountOfRecords, 0));
 };
 
-for (let i = 0; i < 12; i++) {
-    MESSAGES['GlobalChat'].push({
-        message: 'dsadsadssad',
-        id: i
-    });
-    MESSAGES['Test'].push({
-        message: 'dsadsadssad',
-        id: i
-    });
-}
-
 function deleteOldMessages() {
     const ROOMS_WITH_TOO_MANY_MESSAGES = [];
     Object.keys(MESSAGES).forEach(room => MESSAGES[room].length > 10 ? ROOMS_WITH_TOO_MANY_MESSAGES.push(room) : void 0);

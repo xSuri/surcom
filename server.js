@@ -57,6 +57,14 @@ new Promise((resolve, reject) => {
                 app.listen(APP_PORT, () => {
                     console.log(`Server listen in port: ${APP_PORT}`);
                 });
+
+                //!  CONST
+                const TIME_TO_RESTART = 8 * 60 * 60 * 1000;
+
+                setTimeout(() => {
+                    console.log('Server restart...');
+                    process.exit(0);
+                }, TIME_TO_RESTART);
             })
             .catch((err) => {
                 throw err;
