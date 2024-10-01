@@ -21,47 +21,39 @@ const Rooms = initRooms(sequelize, DataTypes);
 
 
 function authToRoom(req, res) {
-    const userData = req.body;
+    const { pin, name } = req.body;
 
-    if (isNaN(userData.pin)) {
-        res.status(401).send({ status: 'Pin must be a number!!!' });
-        return;
-    }
+    if (isNaN(pin)) res.status(401).send({ status: 'Pin must be a number!!!' });
 
-    authenticate(userData.name, userData.pin)
-        .then((data) => {
-            getRoomCreators(userData.name, userData.pin).then((creators) => {
-                res.status(200).send(
-                    JSON.stringify({
-                        status: data,
-                        creators
-                    })
-                )
-            })
+    authenticate(name, pin)
+        .then(data => {
+            getRoomCreators(name, pin)
+                .then((creators) =>
+                    res.status(200)
+                        .send(
+                            JSON.stringify({
+                                status: data,
+                                creators
+                            })
+                        )
+                );
         })
-        .catch((err) => res.status(401).send({
-            status: err
-        }));
+        .catch(err => res.status(401).send({ status: err }));
 };
 
 module.exports.authToRoom = authToRoom;
 
 function newRoom(req, res) {
-    const userData = req.body;
+    const { pin, name, creator } = req.body;
 
-    if (userData.name === 'GlobalChat') {
-        res.status(300).send({ status: 'Admin Room' });
-        return;
-    }
+    // ! ADMINS ROOMS LIST
+    if (name === 'GlobalChat') res.status(300).send({ status: 'Admin Room' });
 
-    if (isNaN(userData.pin)) {
-        res.status(401).send({ status: 'Pin must be a number!!!' });
-        return;
-    }
+    if (isNaN(pin)) res.status(401).send({ status: 'Pin must be a number!!!' });
 
-    create(userData.name, userData.pin, userData.creator)
-        .then((data) => res.status(200).send({ data }))
-        .catch((err) => res.status(401).send({ status: err }))
+    create(name, pin, creator)
+        .then(data => res.status(200).send({ data }))
+        .catch(err => res.status(401).send({ status: err }))
         .finally(() => {
             reloadIoServer();
             reloadRooms().then(() => reloadSockets());
@@ -71,74 +63,44 @@ function newRoom(req, res) {
 module.exports.newRoom = newRoom;
 
 function authenticate(name, pin) {
-    return new Promise((resolve, reject) => {
-        findRoomByName(name)
-            .then(() => {
-                roomPinIsValid(name, Number(pin))
-                    .then((isPinValid) => {
-                        if (isPinValid) {
-                            resolve('Success');
-                        }
-                        else {
-                            reject('Pin is wrong');
-                        }
-                    });
-            })
-            .catch(() => reject('Could not found room'));
-    });
+    return new Promise((resolve, reject) => findRoomByName(name)
+        .then(() => {
+            roomPinIsValid(name, Number(pin))
+                .then(isPinValid => isPinValid ? resolve('Success') : reject('Pin is wrong'));
+        })
+        .catch(() => reject('Could not found room'))
+    );
 };
 
 function getRoomCreators(name, pin) {
-    return new Promise((resolve, reject) => {
-        Rooms.findOne({
-            where: {
-                name,
-                pin
-            },
-        })
-            .then((res) => {
-                if (res === null) {
-                    reject();
-                }
-                else {
-                    resolve(res.creators);
-                }
-            });
-    });
+    return new Promise((resolve, reject) => Rooms.findOne({
+        where: {
+            name,
+            pin
+        },
+    })
+        .then((res) => res === null ? reject() : resolve(res.creators))
+    );
 };
 
 function create(name, pin, creator) {
-    return new Promise((resolve, reject) => {
-
-        findRoomByName(name)
-            .then(() => reject('Already exist!'))
-            .catch(() => {
-                if (!pinLengthIsValid(Number(pin))) {
-                    reject('Length pin is not valid!');
-                    return;
-                }
-
-                createNewRoom(name, Number(pin), creator).then(() => resolve('New room created!'));
-            });
-    });
+    return new Promise((resolve, reject) => findRoomByName(name)
+        .then(() => reject('Already exist!'))
+        .catch(() => !pinLengthIsValid(Number(pin))
+            ? reject('Length pin is not valid!')
+            : createNewRoom(name, Number(pin), creator)
+                .then(() => resolve('New room created!')))
+    );
 };
 
 function findRoomByName(name) {
-    return new Promise((resolve, reject) => {
-        Rooms.findOne({
-            where: {
-                name,
-            },
-        })
-            .then((res) => {
-                if (res === null) {
-                    reject();
-                }
-                else {
-                    resolve();
-                }
-            });
-    });
+    return new Promise((resolve, reject) => Rooms.findOne({
+        where: {
+            name,
+        },
+    })
+        .then(res => res === null ? reject() : resolve())
+    );
 };
 
 function roomPinIsValid(name, pin) {
@@ -148,51 +110,39 @@ function roomPinIsValid(name, pin) {
             pin
         },
     })
-        .then((res) => {
-            if (res === null) {
-                return false;
-            }
-            else {
-                return true;
-            }
-        });
+        .then(res => res === null ? false : true);
 };
 
 function createNewRoom(name, pin, creators) {
-    return new Promise((resolve, reject) => {
-        Rooms.findOne({
-            where: {
+    return new Promise((resolve, reject) => Rooms.findOne({
+        where: {
+            name,
+        },
+    })
+        .then(res => res === null ?
+            Rooms.create({
                 name,
-            },
-        })
-            .then((res) => {
-                if (res === null) {
-                    Rooms.create({
-                        name,
-                        pin,
-                        creators,
-                        confirmed: false,
-                    });
-                }
-
-                resolve();
-            });
-    });
-
+                pin,
+                creators,
+                confirmed: false,
+            })
+            : resolve()
+        )
+    );
 }
 
 function reloadRooms() {
-    return new Promise((resolve, reject) => {
-        Rooms.findAll()
-            .then((res) => {
-                res.map(room => {
-                    rooms.push(room.name);
-                    MESSAGES[room.name] = [];
-                })
+    return new Promise((resolve, reject) => Rooms.findAll()
+        .then(res => {
+            res.map(room => {
+                rooms.push(room.name);
+                MESSAGES[room.name] = [];
+            })
 
-                resolve();
-            });
-    });
+            resolve();
+        })
+    );
 };
 
-reloadRooms().then(() => reloadSockets());
+reloadRooms()
+    .then(() => reloadSockets());

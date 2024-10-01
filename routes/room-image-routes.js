@@ -21,9 +21,8 @@ const sequelize = new Sequelize(SEQUELIZE_OPTIONS.database, SEQUELIZE_OPTIONS.us
 const Images = initImages(sequelize, DataTypes);
 
 function sendNewImage(req, res) {
-    const userData = req.body;
-    const { message, dataImage, room, maxViews, nick } = userData;
-    console.log(userData.room)
+    const { message, dataImage, room, maxViews, nick } = req.body;
+    // ! console.log(userData.room)
 
     const image = Buffer.from(dataImage, 'base64');
 
@@ -31,25 +30,26 @@ function sendNewImage(req, res) {
         .resize(720, 1080)
         .webp()
         .toBuffer()
+        // ! data
         .then(data => {
             addNewImage(room, message, dataImage, nick);
 
-            createNewImage(room, nick, maxViews).then(() => {
-                res.status(200).send(
-                    JSON.stringify({
-                        status: 200,
-                        statusMessage: 'correct'
-                    })
-                );
-            });
+            createNewImage(room, nick, maxViews)
+                .then(() =>
+                    res.status(200)
+                        .send(
+                            JSON.stringify({
+                                status: 200,
+                                statusMessage: 'correct'
+                            })
+                        ));
         });
 };
 
 module.exports.sendNewImage = sendNewImage;
 
 function getImageViews(req, res) {
-    const userData = req.body;
-    const { room, id } = userData;
+    const { room, id } = req.body;
 
     Images.findOne({
         where: {
@@ -63,8 +63,7 @@ function getImageViews(req, res) {
 module.exports.getImageViews = getImageViews;
 
 function incrementImageViews(req, res) {
-    const userData = req.body;
-    const { room, id } = userData;
+    const { room, id } = req.body;
 
     Images.findOne({
         where: {
@@ -90,33 +89,30 @@ function addNewImage(room, message, dataImage, nick) {
 };
 
 function deleteImage(room, id) {
-    return new Promise((resolve, reject) => {
-        Images.destroy({
-            where: {
-                room,
-                id
-            },
+    return new Promise((resolve, reject) => Images.destroy({
+        where: {
+            room,
+            id
+        },
+    })
+        .then(() => {
+            MESSAGES[room] = MESSAGES[room].filter(message => message.id != id);
+            resolve();
         })
-            .then(() => {
-                MESSAGES[room] = MESSAGES[room].filter(message => message.id != id);
-                resolve();
-            })
-            .catch(() => reject());
-    });
+        .catch(() => reject())
+    );
 };
 
 function createNewImage(room, nick, max_views) {
-    return new Promise((resolve, reject) => {
-        Images.create({
-            room,
-            nick,
-            socketImageId: id - 1,
-            views: 0,
-            max_views
-        });
-
-        resolve();
-    });
+    return new Promise((resolve, reject) => Images.create({
+        room,
+        nick,
+        socketImageId: id - 1,
+        views: 0,
+        max_views
+    })
+        .then(() => resolve())
+    );
 };
 
 function resetImagesTable() {

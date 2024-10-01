@@ -13,43 +13,37 @@ const sequelize = new Sequelize(SEQUELIZE_OPTIONS.database, SEQUELIZE_OPTIONS.us
 const Accounts = initAccount(sequelize, DataTypes);
 
 function login(req, res) {
-    const userData = req.body;
+    const { pin, nick } = req.body;
 
-    if (isNaN(userData.pin)) {
-        res.status(401).send({ status: 'Pin must be a number!!!' });
-        return;
-    }
+    if (isNaN(pin)) res.status(401).send({ status: 'Pin must be a number!!!' });
 
-    userLogin(userData.nick, userData.pin)
+    userLogin(nick, pin)
         .then(statusMessage => res.status(200).send(
             JSON.stringify({
                 status: 200,
                 statusMessage,
-                nick: userData.nick
+                nick
             })
         ))
-        .catch((err) => res.status(401).send(JSON.stringify({ statusMessage: err, status: 401 })));
+        .catch(err => res.status(401).send(JSON.stringify({ statusMessage: err, status: 401 })));
 };
 
 module.exports.login = login;
 
 function register(req, res) {
-    const userData = req.body;
+    const { pin, nick } = req.body;
 
-    if (isNaN(userData.pin)) {
-        res.status(401).send({ status: 'Pin must be a number!!!' });
-        return;
-    }
+    if (isNaN(pin)) res.status(401).send({ status: 'Pin must be a number!!!' });
 
-    userRegister(userData.nick, userData.pin)
+    userRegister(nick, pin)
         .then(statusMessage => res.status(200).send(
             JSON.stringify({
                 status: 200,
                 statusMessage,
-                nick: userData.nick
+                nick
             })
         ))
-        .catch((err) => res.status(401).send(JSON.stringify({ statusMessage: err, status: 401 })));
+        .catch(err => res.status(401).send(JSON.stringify({ statusMessage: err, status: 401 })));
 };
 
 module.exports.register = register;
@@ -57,46 +51,30 @@ module.exports.register = register;
 // ********************************************************************* AUTH FUNCTIONS
 
 function userLogin(nick, pin) {
-    return new Promise((resolve, reject) => {
-        findUserByNick(nick)
-            .then((isUserExists) => {
-                if (isUserExists) {
-                    pinIsValid(nick, Number(pin))
-                        .then((isPinValid) => {
-                            if (isPinValid) {
-                                resolve('Success');
-                            }
-                            else {
-                                reject('Pin is wrong');
-                            }
-                        });
-                }
-                else {
-                    reject('Could not found user');
-                }
-            });
-    });
+    return new Promise((resolve, reject) => findUserByNick(nick)
+        .then(isUserExists =>
+            isUserExists
+                ? pinIsValid(nick, Number(pin))
+                    .then(isPinValid => isPinValid ? resolve('Success') : reject('Pin is wrong'))
+                : reject('Could not found user')
+        )
+    );
 };
 
 function userRegister(nick, pin) {
-    return new Promise((resolve, reject) => {
-        findUserByNick(nick)
-            .then(isUserExists => {
-                if (!isUserExists) {
-                    if (!pinLengthIsValid(Number(pin))) {
-                        reject('Length pin is not valid!');
-                        return;
-                    }
+    return new Promise((resolve, reject) => findUserByNick(nick)
+        .then(isUserExists => {
+            if (!isUserExists) {
+                if (!pinLengthIsValid(Number(pin))) reject('Length pin is not valid!');
 
-                    createNewUser(nick, Number(pin));
-
-                    resolve('New user created!');
-                }
-                else {
-                    reject('Already exist!');
-                }
-            });
-    });
+                createNewUser(nick, Number(pin));
+                resolve('New user created!');
+            }
+            else {
+                reject('Already exist!');
+            }
+        })
+    );
 };
 
 
@@ -106,14 +84,7 @@ function findUserByNick(nick) {
             name: `${nick}`,
         },
     })
-        .then((res) => {
-            if (res === null) {
-                return false;
-            }
-            else {
-                return true;
-            }
-        });
+        .then(res => res === null ? false : true);
 }
 
 function pinIsValid(nick, pin) {
@@ -123,23 +94,12 @@ function pinIsValid(nick, pin) {
             pin: `${pin}`
         },
     })
-        .then((res) => {
-            if (res === null) {
-                return false;
-            }
-            else {
-                return true;
-            }
-        });
+        .then(res => res === null ? false : true);
 }
 
 function pinLengthIsValid(pin) {
-    if (pin.toString().length < 6) {
-        return false;
-    }
-    else if (pin.toString().length >= 12) {
-        return false;
-    }
+    if (pin.toString().length < 6) false;
+    else if (pin.toString().length >= 12) false;
     return true;
 }
 
@@ -151,13 +111,12 @@ function createNewUser(nick, pin) {
             name: `${nick}`,
         },
     })
-        .then((res) => {
-            if (res === null) {
+        .then(res => res === null ?
                 Accounts.create({
                     name: `${nick}`,
                     pin: pin,
                     role: 'user'
-                });
-            }
-        });
+                })
+            : void 0 
+        );
 }

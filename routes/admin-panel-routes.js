@@ -12,27 +12,26 @@ const sequelize = new Sequelize(SEQUELIZE_OPTIONS.database, SEQUELIZE_OPTIONS.us
 
 const Accounts = initAccount(sequelize, DataTypes);
 
-function getUserInfo(req, res){
-    const userData = req.body;
+function getUserInfo(req, res) {
+    const { nick } = req.body;
 
-    const nick = userData.nick;
-
-    userInfo(nick).then(data => {
-        res.status(200).send(JSON.stringify({
-            status: 200,
-            role: data.role
-        }));
-    });
+    userInfo(nick)
+        .then(data =>
+            res.status(200)
+                .send(JSON.stringify({
+                    status: 200,
+                    role: data.role
+                }))
+        );
 };
 
 module.exports.getUserInfo = getUserInfo;
 
 function userInfo(nick) {
-    return new Promise((resolve, reject) => {
-        findUserByNickAndGetInfo(nick)
-            .then((data) => resolve(data))
-            .catch(() => reject('Could not found user'));
-    });
+    return new Promise((resolve, reject) => findUserByNickAndGetInfo(nick)
+        .then((data) => resolve(data))
+        .catch(() => reject('Could not found user'))
+    );
 };
 
 function findUserByNickAndGetInfo(nick) {
@@ -41,13 +40,5 @@ function findUserByNickAndGetInfo(nick) {
             name: `${nick}`,
         },
     })
-        .then((res) => {
-            if (res === null) {
-                return false;
-            }
-            else {
-                return res.dataValues;
-            }
-        });
-    ;
+        .then((res) => res === null ? false : res.dataValues);
 }
