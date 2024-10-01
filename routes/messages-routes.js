@@ -1,7 +1,5 @@
 const IoServer = require('socket.io');
-
 const http = require('http');
-
 const server = http.Server();
 
 const {
@@ -38,8 +36,6 @@ function getAllMessages(req, res) {
 
 module.exports.getAllMessages = getAllMessages;
 
-// ! REPAIR THAT ^ and sockets under
-// SECURE RELOAD SOCKETS
 function reloadSockets() {
     io.on('connection', function (socket) {
 
@@ -54,7 +50,6 @@ function reloadSockets() {
         rooms.map(room => {
             socket.on(room, (msg) => {
                 addNewMessage(room, JSON.parse(msg));
-                // ! delete that -> for post before
                 io.emit(room, JSON.stringify(slicedArray(room, 10)));
             });
         });
@@ -78,4 +73,26 @@ function addNewMessage(room, message) {
 function slicedArray(room, amountOfRecords) {
     return MESSAGES[room].slice(Math.max(MESSAGES[room].length - amountOfRecords, 0));
 };
-//! ^
+
+for (let i = 0; i < 12; i++) {
+    MESSAGES['GlobalChat'].push({
+        message: 'dsadsadssad',
+        id: i
+    });
+    MESSAGES['Test'].push({
+        message: 'dsadsadssad',
+        id: i
+    });
+}
+
+function deleteOldMessages() {
+    const ROOMS_WITH_TOO_MANY_MESSAGES = [];
+    Object.keys(MESSAGES).forEach(room => MESSAGES[room].length > 10 ? ROOMS_WITH_TOO_MANY_MESSAGES.push(room) : void 0);
+
+    ROOMS_WITH_TOO_MANY_MESSAGES.forEach(room => {
+        MESSAGES[room] = MESSAGES[room].slice(-10);
+    });
+};
+
+// ! CONST
+setInterval(deleteOldMessages, 60000 * 15);

@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Testing string\" && exit 1",
-    "start": "node ./server.js"
+    "start": "nodemon ./server.js"
   },
   "author": "Hubert 'xsuri' Kucharzak",
   "license": "LGPL-3.0-only",
@@ -13,6 +13,7 @@
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "nodemon": "^3.1.7",
     "sequelizer": "^1.1.4",
     "sharp": "^0.32.6",
     "socket.io": "^4.5.4",

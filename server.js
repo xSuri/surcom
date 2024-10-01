@@ -1,5 +1,5 @@
 const express = require('express');
-const { Sequelize } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 const bodyParser = require('body-parser');
 
 const { login, register } = require('./routes/auth-routes.js');
@@ -35,7 +35,7 @@ new Promise((resolve, reject) => {
 
         app.use(bodyParser.json({ limit: APP_SEND_LIMIT }));
         app.use(bodyParser.urlencoded({ limit: APP_SEND_LIMIT, extended: true }));
-        
+
         app.post('/api/login', (req, res) => login(req, res));
         app.put('/api/register', (req, res) => register(req, res));
 
