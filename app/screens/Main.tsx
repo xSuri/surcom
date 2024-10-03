@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getStorage } from './utils/storage';
 
 import { SCREEN_ROUTES } from './utils/const';
 import { IconButton } from './utils/button';
@@ -18,13 +18,13 @@ function Main({ navigation, signIn, updateRoomsOnLoad }: any) {
     useEffect(() => {
         setUnlock(false);
 
-        AsyncStorage.getItem('@rooms').then(rooms => {
+        getStorage('@rooms').then(rooms => {
             if (rooms && rooms.length > 0) {
                 updateRoomsOnLoad(JSON.parse(rooms));
             }
         });
 
-        AsyncStorage.getItem('@nick')
+        getStorage('@nick')
             .then(nick => {
                 if (nick && nick.length > 0) {
                     signIn(nick);

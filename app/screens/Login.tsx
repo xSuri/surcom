@@ -3,7 +3,7 @@ import style from './public/css/global.module';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setStorage } from './utils/storage';
 
 import { Text, TextInput, View } from 'react-native';
 import { IconButton } from './utils/button';
@@ -94,7 +94,7 @@ function LoginPage({ navigation, signIn }: any) {
                                 if (data.status === STATUTS['success']) {
 
                                     signIn(data.nick);
-                                    AsyncStorage.setItem('@nick', data.nick);
+                                    setStorage('@nick', data.nick);
 
                                     showAlert({
                                         alertType: ALERT_TYPES.SUCCESS,
