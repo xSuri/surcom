@@ -1,15 +1,9 @@
-import EncryptedStorage from 'react-native-encrypted-storage';
-
+import * as SecureStore from 'expo-secure-store';
 
 export function getStorage(key: string) {
-    return EncryptedStorage.getItem(key);
+    return SecureStore.getItemAsync(key);
 }
 
 export function setStorage(key: string, data: any) {
-    EncryptedStorage.setItem(
-        key,
-        JSON.stringify({
-            token: data,
-        })
-    );
+    SecureStore.setItemAsync(key, data);
 }

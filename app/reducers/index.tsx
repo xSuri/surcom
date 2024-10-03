@@ -32,7 +32,7 @@ export default function reducer(state = initialState, action: { type: any; nick:
             };
             
         case ACTION_TYPES.ADD_ROOM:
-            setStorage('@rooms', JSON.stringify([...state.rooms, action.room]));
+            setStorage('rooms', JSON.stringify([...state.rooms, action.room]));
 
             return {
                 ...state,
@@ -41,7 +41,7 @@ export default function reducer(state = initialState, action: { type: any; nick:
 
         case ACTION_TYPES.DELETE_ROOM:
             const new_rooms = [...state.rooms].filter(room => room !== action.room)
-            setStorage('@rooms', JSON.stringify(new_rooms));
+            setStorage('rooms', JSON.stringify(new_rooms));
 
             return {
                 ...state,

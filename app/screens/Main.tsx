@@ -18,13 +18,13 @@ function Main({ navigation, signIn, updateRoomsOnLoad }: any) {
     useEffect(() => {
         setUnlock(false);
 
-        getStorage('@rooms').then(rooms => {
+        getStorage('rooms').then(rooms => {
             if (rooms && rooms.length > 0) {
                 updateRoomsOnLoad(JSON.parse(rooms));
             }
         });
 
-        getStorage('@nick')
+        getStorage('nick')
             .then(nick => {
                 if (nick && nick.length > 0) {
                     signIn(nick);

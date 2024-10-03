@@ -87,7 +87,7 @@ function RegisterPage({ navigation, signIn }: any) {
                                     if (data.status === STATUTS['success']) {
 
                                         signIn(data.nick);
-                                        setStorage('@nick', data.nick);
+                                        setStorage('nick', data.nick);
 
                                         showAlert({
                                             alertType: ALERT_TYPES.SUCCESS,
