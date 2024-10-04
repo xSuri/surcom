@@ -95,8 +95,8 @@ const style = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     width: '80%',
-    backgroundColor: '#232323',
-    color: 'white',
+    backgroundColor: 'white',
+    color: 'black',
     borderRadius: 20,
   },
 

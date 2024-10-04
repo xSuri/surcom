@@ -2,6 +2,7 @@ import style from './public/css/room.module';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
+import { useSocket } from '../reducers/configure-store';
 
 import {
     Text,
@@ -31,10 +32,10 @@ const Room = ({ navigation, route, store }: any) => {
     const [items, setItems] = useState(15);
     const [newMessage, setNewMessage] = useState('');
 
-    const { socket, roomName } = route.params;
+    const { roomName } = route.params;
 
-    // const flatList = useRef();
-    // const input = useRef();
+    const input: any = useRef();
+    const socket: any = useSocket();
 
     useEffect(() => {
         fetch(API_URL + '/room/getAllMessages', {
@@ -65,16 +66,11 @@ const Room = ({ navigation, route, store }: any) => {
     }, [items])
 
     useEffect(() => {
-        socket.on(roomName, (data: string) => setMessages(JSON.parse(data)));
+        socket.on(roomName, (data: string) => {
+            setMessages(JSON.parse(data));
+            console.log(data)
+        });
     }, []);
-
-    const handleScroll = (event: { nativeEvent: { contentOffset: any; }; }) => {
-        const { contentOffset } = event.nativeEvent;
-
-        // if (contentOffset.y < 0.15) {
-        //     setItems(items + 10);
-        // }
-    }
 
     return (
         <>
@@ -89,9 +85,6 @@ const Room = ({ navigation, route, store }: any) => {
                                         showsVerticalScrollIndicator={false}
                                         showsHorizontalScrollIndicator={false}
                                         data={messages}
-                                        // ref={flatList}
-                                        // onContentSizeChange={() => flatList.current.scrollToEnd()}
-                                        onScroll={handleScroll}
                                         renderItem={({ item }: any) => (
                                             <ChatMessage
                                                 key={item.id}
@@ -160,11 +153,11 @@ const Room = ({ navigation, route, store }: any) => {
                                 }
                                 setNewMessage('');
 
-                                // input.current.focus()
+                                input.current.focus()
                             }}
                             onPressIn={() => setInputIsActive(true)}
                             value={newMessage}
-                            // ref={input}
+                            ref={input}
                             placeholder="Write Your Message!"
                             style={[style.text_input, inputIsActive ? { width: '90%' } : { width: '66%' }]}
                             editable={true}

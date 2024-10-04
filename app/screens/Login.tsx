@@ -19,7 +19,7 @@ function LoginPage({ navigation, signIn }: any) {
     const [isUnlocked, setUnlock] = useState(true);
 
     const [nick, setNick] = useState('');
-    const [pin, setPin] = useState('');
+    const [pin, setPin]: any = useState('');
 
     return (
         <View style={style.body}>
@@ -66,7 +66,7 @@ function LoginPage({ navigation, signIn }: any) {
                     onPress={() => {
                         setUnlock(false);
 
-                        if (pin) {
+                        if (isNaN(pin)) {
                             showAlert({
                                 alertType: ALERT_TYPES.DANGER,
                                 alertTitle: 'Please try again!',

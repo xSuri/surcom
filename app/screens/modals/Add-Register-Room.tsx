@@ -11,10 +11,9 @@ import { API_URL } from '../utils/const';
 
 import { addRoom as addRoomAction } from '../../reducers/index';
 
-function AddingRoomModal({ toggleRoomModal, socket, store, addRoom, navigation }: any) {
+function AddingRoomModal({ toggleRoomModal, store, addRoom, navigation }: any) {
     const [roomName, setRoomName] = useState('');
     const [roomPin, setRoomPin] = useState('');
-
 
     return (
         <View style={style.body}>
@@ -43,7 +42,7 @@ function AddingRoomModal({ toggleRoomModal, socket, store, addRoom, navigation }
                 backgroundColor="#fff"
                 additionalStyleClass={{ color: 'black' }}
                 imageColor="black"
-                onPress={() => createNewRoom(roomName, roomPin, addRoom, store, toggleRoomModal)}
+                onPress={() => createNewRoom(roomName, roomPin, addRoom, store, toggleRoomModal, navigation)}
             />
 
             <IconButton
@@ -57,7 +56,7 @@ function AddingRoomModal({ toggleRoomModal, socket, store, addRoom, navigation }
     );
 }
 
-function createNewRoom(name: string, pin: string, addRoom: (arg0: any) => void, store: { rooms: any[]; nick: any; }, toggleRoomModal: ((value: unknown) => unknown) | null | undefined) {
+function createNewRoom(name: string, pin: string, addRoom: (arg0: any) => void, store: { rooms: any[]; nick: any; }, toggleRoomModal: ((value: unknown) => unknown) | null | undefined, navigation: any) {
     let isExists = false;
 
     store.rooms.map((room: any) => {
@@ -123,7 +122,7 @@ function createNewRoom(name: string, pin: string, addRoom: (arg0: any) => void, 
         .catch(err => {
             console.log(err);
 
-            // navigation.navigate('Home');
+            navigation.navigate('Home');
             showAlert({
                 alertType: ALERT_TYPES.DANGER,
                 alertTitle: 'Error!',

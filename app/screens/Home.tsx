@@ -1,28 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
-import { Text, View, Image, TouchableWithoutFeedback } from 'react-native';
+import { View, Image, TouchableWithoutFeedback } from 'react-native';
 import { IconButton } from './utils/button';
 import style from './public/css/global.module';
 import AddingRoomModal from './modals/Add-Register-Room';
 import DropdownPicker from './utils/dropdown-picker';
 
-import { SOCKET_URL } from './utils/const';
-
 import { deleteRoom as deleteRoomAction } from '../reducers/index';
 
-const io = require('socket.io-client');
-
-function HomePage({ navigation, rooms, state, deleteRoom }:any) {
-    const [socket, setSocket] = useState('');
+function HomePage({ navigation, rooms, deleteRoom }: any) {
     const [roomModalIsOpen, setRoomModalIsOpen] = useState(false);
-
-    useEffect(() => setSocket(io(SOCKET_URL)), []);
 
     const toggleRoomModal = () => setRoomModalIsOpen(!roomModalIsOpen);
 
     if (roomModalIsOpen) return (
-        <AddingRoomModal navigation={navigation} toggleRoomModal={toggleRoomModal} socket={socket} />
+        <AddingRoomModal navigation={navigation} toggleRoomModal={toggleRoomModal} />
     );
 
 
@@ -61,7 +54,6 @@ function HomePage({ navigation, rooms, state, deleteRoom }:any) {
                         additionalStyleClass={style.textWhite}
                         onPress={() => {
                             navigation.navigate('Room', {
-                                socket,
                                 roomName: 'GlobalChat',
                             })
                         }}
@@ -78,7 +70,6 @@ function HomePage({ navigation, rooms, state, deleteRoom }:any) {
                                     additionalStyleClass={style.textWhite}
                                     onPress={() => {
                                         navigation.navigate('Room', {
-                                            socket,
                                             roomName: room,
                                         })
                                     }}
