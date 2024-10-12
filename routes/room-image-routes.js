@@ -43,6 +43,7 @@ function sendNewImage(req, res) {
                                 statusMessage: 'correct'
                             })
                         ));
+                        // ! CONST
         });
 };
 

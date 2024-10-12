@@ -2,7 +2,7 @@ const express = require('express');
 const { Sequelize, DataTypes } = require('sequelize');
 const bodyParser = require('body-parser');
 
-const { login, register } = require('./routes/auth-routes.js');
+const { login, register, me, authenticateJWT } = require('./routes/auth-routes.js');
 const { authToRoom, newRoom } = require('./routes/room-routes.js');
 const { getUserInfo } = require('./routes/admin-panel-routes.js');
 const { sendNewImage, getImageViews, incrementImageViews, resetImagesTable } = require('./routes/room-image-routes.js');
@@ -11,6 +11,7 @@ const {
     APP_PORT,
     APP_SEND_LIMIT,
     SEQUELIZE_OPTIONS,
+    TIME_TO_RESTART
 } = require('./const/index.js');
 const { getAllMessages } = require('./routes/messages-routes.js');
 
@@ -33,22 +34,28 @@ new Promise((resolve, reject) => {
     .then(() => {
         const app = express();
 
+        // app.use(cors({
+        //     origin: '*',
+        //     credentials: true
+        // }));
+
         app.use(bodyParser.json({ limit: APP_SEND_LIMIT }));
         app.use(bodyParser.urlencoded({ limit: APP_SEND_LIMIT, extended: true }));
 
+        app.get('/me', authenticateJWT, (req, res) => me(req, res));
         app.post('/api/login', (req, res) => login(req, res));
         app.put('/api/register', (req, res) => register(req, res));
 
-        app.post('/api/room', (req, res) => authToRoom(req, res));
-        app.put('/api/room', (req, res) => newRoom(req, res));
+        app.post('/api/room', authenticateJWT, (req, res) => authToRoom(req, res));
+        app.put('/api/room', authenticateJWT, (req, res) => newRoom(req, res));
 
-        app.post('/api/room/getAllMessages', (req, res) => getAllMessages(req, res));
+        app.post('/api/room/getAllMessages', authenticateJWT, (req, res) => getAllMessages(req, res));
 
-        app.post('/api/room/incrementImageViews', (req, res) => incrementImageViews(req, res));
-        app.put('/api/room/sendNewImage', (req, res) => sendNewImage(req, res));
-        app.get('/api/room/getImageViews', (req, res) => getImageViews(req, res));
+        app.post('/api/room/incrementImageViews', authenticateJWT, (req, res) => incrementImageViews(req, res));
+        app.put('/api/room/sendNewImage', authenticateJWT, (req, res) => sendNewImage(req, res));
+        app.get('/api/room/getImageViews', authenticateJWT, (req, res) => getImageViews(req, res));
 
-        app.post('/api/user/getInfoAboutUser', (req, res) => getUserInfo(req, res));
+        app.post('/api/user/getInfoAboutUser', authenticateJWT, (req, res) => getUserInfo(req, res));
 
         sequelize.sync()
             .then(() => {
@@ -57,9 +64,6 @@ new Promise((resolve, reject) => {
                 app.listen(APP_PORT, () => {
                     console.log(`Server listen in port: ${APP_PORT}`);
                 });
-
-                //!  CONST
-                const TIME_TO_RESTART = 8 * 60 * 60 * 1000;
 
                 setTimeout(() => {
                     console.log('Server restart...');

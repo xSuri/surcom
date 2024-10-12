@@ -19,6 +19,7 @@ const sequelize = new Sequelize(SEQUELIZE_OPTIONS.database, SEQUELIZE_OPTIONS.us
 
 const Rooms = initRooms(sequelize, DataTypes);
 
+//!  ALL STATUS  CONST
 
 function authToRoom(req, res) {
     const { pin, name } = req.body;

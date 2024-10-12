@@ -3,11 +3,12 @@ const http = require('http');
 const server = http.Server();
 
 const {
+    TIME_TO_DELETE_OLD_MESSAGES,
     PORT_FOR_SOCKET,
     MESSAGES,
     rooms,
     getId,
-    incrementId
+    incrementId,
 } = require('../const/index.js');
 
 let io = IoServer(PORT_FOR_SOCKET);
@@ -28,7 +29,7 @@ function getAllMessages(req, res) {
     let messagesList = roomMessage;
 
     if (items > 0) {
-        messagesList = slicedArray(room, items);
+        messagesList = slicedArray(room, 10);
     }
 
     res.status(200).send(JSON.stringify(messagesList));
@@ -39,13 +40,10 @@ module.exports.getAllMessages = getAllMessages;
 function reloadSockets() {
     io.on('connection', function (socket) {
 
-        console.log(`New client connected! ('${socket.id}')`);
-
         socket.on('GlobalChat', (msg) => {
             addNewMessage('GlobalChat', JSON.parse(msg));
             io.emit('GlobalChat', JSON.stringify(slicedArray('GlobalChat', 10)));
-        })
-
+        });
 
         rooms.map(room => {
             socket.on(room, (msg) => {
@@ -79,9 +77,9 @@ function deleteOldMessages() {
     Object.keys(MESSAGES).forEach(room => MESSAGES[room].length > 10 ? ROOMS_WITH_TOO_MANY_MESSAGES.push(room) : void 0);
 
     ROOMS_WITH_TOO_MANY_MESSAGES.forEach(room => {
+        // ! CONST
         MESSAGES[room] = MESSAGES[room].slice(-10);
     });
 };
 
-// ! CONST
-setInterval(deleteOldMessages, 60000 * 15);
+setInterval(deleteOldMessages, TIME_TO_DELETE_OLD_MESSAGES);

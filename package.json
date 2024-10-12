@@ -1,11 +1,11 @@
 {
   "name": "Surcom Server",
-  "version": "1.1.0-beta",
-  "description": "Basic React-Native Communicator :)",
+  "version": "1.0.0-implementation",
+  "description": "Basic React-Native Communicator Server",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Testing string\" && exit 1",
-    "start": "pm2 start server.js --name Surcom"
+    "start": "pm2 start server.js --name Surcom-Server"
   },
   "author": "Hubert 'xsuri' Kucharzak",
   "license": "LGPL-3.0-only",
@@ -13,11 +13,15 @@
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
     "pm2": "^5.4.2",
     "sequelizer": "^1.1.4",
     "sharp": "^0.32.6",
     "socket.io": "^4.5.4",
     "socket.io-client": "^4.5.4",
     "sqlite3": "^5.1.4"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.7"
   }
 }
