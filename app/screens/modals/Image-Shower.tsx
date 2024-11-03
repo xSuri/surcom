@@ -5,22 +5,23 @@ import { connect } from 'react-redux';
 
 import { View, Image } from 'react-native';
 
-import { API_URL } from '../utils/const';
+import { API_URL, API_URLS } from '../utils/const';
 
 function ImageShower({ route }: any) {
     const { image } = route.params;
 
-    // INCREMENT NALICZANIE
-    // ZABEZPIECZENIE
+    //! INCREMENT NALICZANIE
+    //! ZABEZPIECZENIE
 
     // useEffect(() => {
-    //     fetch(API_URL + '/room/getImageViews', {
+    //! POST
+    //     fetch(API_URL + API_URLS['room:getImageViews'], {
     //         headers: {
     //             "Content-Type": "application/json"
     //         },
     //         method: 'POST',
     //         body: JSON.stringify({
-                
+
     //         })
 
     //     })

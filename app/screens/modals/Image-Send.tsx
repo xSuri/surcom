@@ -7,7 +7,7 @@ import { Text, View, TextInput } from 'react-native';
 import { IconButton } from '../utils/button';
 
 import showAlert, { ALERT_TYPES } from '../utils/alert';
-import { API_URL } from '../utils/const';
+import { ALERTS_TEXTS, API_URL, API_URLS, NUMBERS, SCREEN_ROUTES, TEXTS } from '../utils/const';
 import { put } from '../utils/network';
 
 function ImageSend({ route }: any) {
@@ -20,42 +20,48 @@ function ImageSend({ route }: any) {
 
     function sendNewImage() {
         put({
-            url: API_URL + '/room/sendNewImage',
+            url: API_URL + API_URLS['room:sendNewImage'],
             body: JSON.stringify({
                 nick: store.nick,
                 message,
                 dataImage: dataImage.assets[0].base64,
                 room,
-                maxViews: 3
+                // !
+                maxViews: NUMBERS['image:max:views']
             })
         })
             .then(() => {
                 showAlert({
-                    alertType: 'SUCCESS',
-                    alertTitle: 'Image Added!',
-                    alertBody: 'Your image has been sent. Click now on yours room!',
+                    alertType: ALERT_TYPES.SUCCESS,
+                    alertTitle: ALERTS_TEXTS['alert:text:image:send:success:title'],
+                    alertBody: ALERTS_TEXTS['alert:text:image:send:success:body'],
                 });
-                navigation.navigate('Home');
+
+                navigation.navigate(SCREEN_ROUTES['screen:home']);
             });
     }
 
     return (
         <View style={style.body}>
-            <Text style={style.textWhite}>Message to Image: </Text>
+            <Text style={style.textWhite}>
+                {TEXTS['text:image:send:message']}
+            </Text>
 
             <TextInput
                 onChangeText={(text) => setNewMessage(text)}
                 value={newMessage}
-                placeholder="Write Your Message"
+                placeholder={TEXTS['text:image:input:write:message']}
                 style={style.input}
             />
 
-            <Text style={style.textWhite}>Max Views Image: </Text>
+            <Text style={style.textWhite}>
+                {TEXTS['text:image:send:max:views']}
+            </Text>
 
             <TextInput
                 onChangeText={(number) => setMaxViews(Number(number))}
                 value={String(maxViews)}
-                placeholder="Write Max Views"
+                placeholder={TEXTS['text:image:input:max:views']}
                 style={style.input}
                 keyboardType="numeric"
             />

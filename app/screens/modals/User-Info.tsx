@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Text, View } from 'react-native';
 
-import { API_URL } from '../utils/const';
+import { API_URL, API_URLS, ROLES, TEXTS } from '../utils/const';
 import { post } from '../utils/network';
 
 function UserInfo({ store, navigation, route }: any) {
@@ -13,12 +13,9 @@ function UserInfo({ store, navigation, route }: any) {
 
     const { messageNick } = route.params;
 
-
-    // FOR TEST FUNCTIO!!
-
     useEffect(() => {
         post({
-            url: API_URL + '/user/getInfoAboutUser',
+            url: API_URL + API_URLS['user:getInfoAboutUser'],
             body: JSON.stringify({
                 nick: messageNick
             })
@@ -27,7 +24,6 @@ function UserInfo({ store, navigation, route }: any) {
             .then(data => setUserInfo({
                 role: data.role,
             }));
-
     }, [])
 
     // *********************
@@ -36,14 +32,20 @@ function UserInfo({ store, navigation, route }: any) {
 
     return (
         <View style={style.body}>
-            <Text>Name: {messageNick}</Text>
-            <Text>Role: {Object.values(userInfo).length > 0 ? userInfo.role : 'Loading'}</Text>
+            <Text>
+                {TEXTS['text:user:info:text:name']} {messageNick}
+            </Text>
+            <Text>
+                {TEXTS['text:user:info:text:role']} {Object.values(userInfo).length > 0 ? userInfo.role : TEXTS['text:user:info:text:role:loading']}
+            </Text>
 
             {/* ADMIN PANEL */}
 
             {
-                store.role === 'admin' ? (
-                    <Text>ADMIN PANEL</Text>
+                store.role === ROLES.admin ? (
+                    <Text>
+                        {TEXTS['text:user:info:admin:text:panel']}
+                    </Text>
                 ) : null
             }
 

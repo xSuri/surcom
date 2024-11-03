@@ -95,6 +95,7 @@ function LoginPage({ navigation, signIn }: any) {
 
                                     signIn(data.nick);
                                     setStorage('nick', data.nick);
+                                    setStorage('token', data.token);
 
                                     showAlert({
                                         alertType: ALERT_TYPES.SUCCESS,

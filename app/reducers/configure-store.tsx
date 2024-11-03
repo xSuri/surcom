@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import io, {Socket} from 'socket.io-client';
+import io, { Socket } from 'socket.io-client';
 
 import { createStore, combineReducers } from 'redux';
 
@@ -8,11 +8,11 @@ import { SOCKET_URL } from '../screens/utils/const';
 import reducer from './index';
 
 const rootReducer = combineReducers({
-    user: reducer
+  user: reducer
 });
 
 const configureStore = () => {
-    return createStore(rootReducer); // ! UPDATE
+  return createStore(rootReducer); // ! UPDATE
 }
 
 export default configureStore;
@@ -32,13 +32,4 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-// Hook do używania socketu
-export const useSocket = () => {
-  const context = useContext(SocketContext);
-  
-  if (!context) {
-    throw new Error("useSocket must be used within a SocketProvider");
-  }
-
-  return context.socket;
-};
+export const useSocket = () => useContext(SocketContext)?.socket;

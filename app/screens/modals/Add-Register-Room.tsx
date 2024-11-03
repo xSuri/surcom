@@ -7,9 +7,10 @@ import { TextInput, View } from 'react-native';
 import { IconButton } from '../utils/button';
 
 import showAlert, { ALERT_TYPES } from '../utils/alert';
-import { API_URL } from '../utils/const';
+import { ALERTS_TEXTS, API_URL, API_URLS, SCREEN_ROUTES, STATUTES, TEXTS } from '../utils/const';
 
 import { addRoom as addRoomAction } from '../../reducers/index';
+import { post, put } from '../utils/network';
 
 function AddingRoomModal({ toggleRoomModal, store, addRoom, navigation }: any) {
     const [roomName, setRoomName] = useState('');
@@ -21,7 +22,7 @@ function AddingRoomModal({ toggleRoomModal, store, addRoom, navigation }: any) {
             <TextInput
                 onChangeText={setRoomName}
                 value={roomName}
-                placeholder="Write Your Room Name"
+                placeholder={TEXTS['text:add:room:input:room:name']}
                 style={style.input}
                 placeholderTextColor='whitesmoke'
             />
@@ -29,7 +30,7 @@ function AddingRoomModal({ toggleRoomModal, store, addRoom, navigation }: any) {
             <TextInput
                 onChangeText={setRoomPin}
                 value={roomPin}
-                placeholder="Write Your Room PIN"
+                placeholder={TEXTS['text:add:room:input:room:pin']}
                 keyboardType="numeric"
                 secureTextEntry
                 style={style.input}
@@ -38,7 +39,7 @@ function AddingRoomModal({ toggleRoomModal, store, addRoom, navigation }: any) {
 
             <IconButton
                 icon="sign-in"
-                title="Create / Auth"
+                title={TEXTS['text:add:room:button:room:title']}
                 backgroundColor="#fff"
                 additionalStyleClass={{ color: 'black' }}
                 imageColor="black"
@@ -65,24 +66,26 @@ function createNewRoom(name: string, pin: string, addRoom: (arg0: any) => void, 
         }
     })
 
-    if (isExists) {
-        return;
-    }
+    if (isExists) return;
 
-    roomSendFetchWithMethod({
-        name,
-        pin,
-        creator: store.nick,
-        method: 'POST'
+    post({
+        url: API_URL + API_URLS.room,
+        body: JSON.stringify({
+            name,
+            pin,
+            creator: store.nick,
+        })
     })
         .then(res => res.json())
         .then((data) => {
-            if (data.status === 'Could not found room') {
-                roomSendFetchWithMethod({
-                    name,
-                    pin,
-                    creator: store.nick,
-                    method: 'PUT'
+            if (data.status === STATUTES['text:room:not:found']) {
+                put({
+                    url: API_URL + API_URLS.room,
+                    body: JSON.stringify({
+                        name,
+                        pin,
+                        creator: store.nick,
+                    })
                 })
                     .then(res => res.json())
                     .then(() => {
@@ -90,61 +93,43 @@ function createNewRoom(name: string, pin: string, addRoom: (arg0: any) => void, 
 
                         showAlert({
                             alertType: ALERT_TYPES.SUCCESS,
-                            alertTitle: 'New Room',
-                            alertBody: 'Success added new room!',
+                            alertTitle: ALERTS_TEXTS['alert:text:add:room:not:found:success:title'],
+                            alertBody: ALERTS_TEXTS['alert:text:add:room:not:found:success:body'],
                         }).then(toggleRoomModal);
                     })
-                    .catch((err) => {
+                    .catch(() =>
                         showAlert({
                             alertType: ALERT_TYPES.DANGER,
-                            alertTitle: 'Error!',
-                            alertBody: 'Something went wrong! (Please try again later)',
-                        });
-                    })
+                            alertTitle: ALERTS_TEXTS['alert:text:add:room::not:found:error:title'],
+                            alertBody: ALERTS_TEXTS['alert:text:add:room::not:found:error:body'],
+                        })
+                    );
             }
-            else if (data.status === 'Success') {
+            else if (data.status === STATUTES['text:room:success']) {
                 addRoom(name);
 
                 showAlert({
                     alertType: ALERT_TYPES.SUCCESS,
-                    alertTitle: 'Authenticated',
-                    alertBody: 'Success authed to room!',
-                }).then(toggleRoomModal);
+                    alertTitle: ALERTS_TEXTS['alert:text:add:room::success:auth:title'],
+                    alertBody: ALERTS_TEXTS['alert:text:add:room::success:auth:body'],
+                })
+                    .then(toggleRoomModal);
             }
-            else {
-                showAlert({
-                    alertType: ALERT_TYPES.DANGER,
-                    alertTitle: 'Error!',
-                    alertBody: data.status,
-                });
-            }
-        })
-        .catch(err => {
-            console.log(err);
-
-            navigation.navigate('Home');
-            showAlert({
+            else showAlert({
                 alertType: ALERT_TYPES.DANGER,
-                alertTitle: 'Error!',
-                alertBody: 'Something went wrong! (Please try again later -> Network Problem)',
+                alertTitle: ALERTS_TEXTS['alert:text:add:room::error:title'],
+                alertBody: data.status,
             });
         })
-}
+        .catch(() => {
+            navigation.navigate(SCREEN_ROUTES['screen:home']);
 
-function roomSendFetchWithMethod({ name, pin, creator, method }: any) {
-    return fetch(API_URL + '/room', {
-        headers: {
-            "Content-Type": "application/json"
-        },
-        method,
-        body: JSON.stringify(
-            {
-                name,
-                pin,
-                creator
-            }
-        )
-    });
+            showAlert({
+                alertType: ALERT_TYPES.DANGER,
+                alertTitle: ALERTS_TEXTS['alert:text:add:room::network:error:title'],
+                alertBody: ALERTS_TEXTS['alert:text:add:room::network:error:body'],
+            });
+        })
 }
 
 const mapStateToProps = (state: { user: any; }) => ({
