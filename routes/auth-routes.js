@@ -14,6 +14,7 @@ const sequelize = new Sequelize(SEQUELIZE_OPTIONS.database, SEQUELIZE_OPTIONS.us
 const Accounts = initAccount(sequelize, DataTypes);
 
 // ! ALL STATUS TO CONST
+// ! CHANGE CONST TO BIG
 
 function login(req, res) {
     const { pin, nick } = req.body;
@@ -137,10 +138,10 @@ function createNewUser(nick, pin) {
 }
 
 const authenticateJWT = (req, res, next) => {
-    const token = req.headers.authorization;
+    const TOKEN = req.headers.authorization;
 
-    if (token) {
-        jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (TOKEN) {
+        jwt.verify(TOKEN, SECRET_KEY, (err, user) => {
             if (err) {
                 return res.status(403).json({ message: 'Unauthorized Token' });
             }
