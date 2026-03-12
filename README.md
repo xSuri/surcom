@@ -1,19 +1,33 @@
-# SURCOM - Develop
+# SURCOM — Privacy-First Messenger
 
-# PL
-Prosty komunikator napisany w react-native z backendem postawionym na nodejs. W zamyśle ma przechowywać jak najmniej informacji o tym co ktoś pisze/wysyła. Rzeczy te przechowywane są w pamięci i automatycznie usuwane po cyklicznym restarcie serwera. Projekt na razie jest w fazie alpha i wiele rzeczy trzeba dodać do stałych, lub exportowac na osobne pliki. Projekt reazlizowany w wolnym czasie dla "resetu mózgu" - jak wiele innych. Ten projekt jest jedynym, który odważyłem się udostępnić.
+## PL
+Lekki komunikator mobilny zbudowany w **React Native** i **Node.js**, realizujący koncepcję **Privacy by Design**. System minimalizuje ślad cyfrowy użytkownika poprzez całkowitą rezygnację z persystentnych baz danych.
 
-# Uruchomienie
-- Pobierz wszystkie zasoby - npm i
-- Uruchom server i dodaj jego ip w pliku `const.js`, który jest w plikach surcomu -> utils
-- Zbuduj aplikacje i zainstaluj na telefonie (java / gradle), lub
-- Zainstaluj aplikację developersko za pomocą npx android
+### Kluczowe cechy:
+* **In-Memory Architecture:** Dane przechowywane są wyłącznie w pamięci operacyjnej (RAM).
+* **Auto-Purge:** Cykliczne restarty serwera gwarantują nieodwracalne usuwanie historii komunikacji.
+* **Ephemeral Messaging:** Brak zapisu wiadomości na dysku, co uniemożliwia wyciek danych historycznych.
 
-# ENG
-A simple messenger written in react-native with a backend based on nodejs. The idea is to store as little information as possible about what someone writes/sends. These items are stored in memory and automatically deleted after cyclic server restarts. The project is currently in the alpha phase and many things need to be added to constants or exported to separate files. A project implemented in my free time to "reset my brain" - like many others. This project is the only one I dared to share.
+*Status: Faza Alpha. Trwa refaktoryzacja struktury plików i optymalizacja stałych.*
 
-# Activation
-- Download all resources - npm i
-- Start the server and add its ip in the `const.js` file which is in the surcom files -> utils
-- Build app and install on your phone (java/gradle) or
-- Install the dev application using npx android
+### Uruchomienie
+1. Zainstaluj zależności: `npm install`
+2. Uruchom serwer i zaktualizuj IP w `utils/const.js`.
+3. Budowanie: `npx react-native run-android` lub przez Gradle.
+
+---
+
+## ENG
+A privacy-focused mobile messenger built with **React Native** and **Node.js**. Designed with a **Privacy by Design** approach to minimize the user's digital footprint.
+
+### Key Features:
+* **In-Memory Architecture:** Data is stored exclusively in volatile memory (RAM).
+* **Auto-Purge:** Periodic server restarts ensure irreversible deletion of communication history.
+* **Ephemeral Messaging:** No disk persistence, preventing any historical data leaks.
+
+*Status: Alpha phase. Ongoing code refactoring and constant optimization.*
+
+### Setup
+1. Install dependencies: `npm install`
+2. Start server and update IP in `utils/const.js`.
+3. Build: `npx react-native run-android` or via Gradle.
