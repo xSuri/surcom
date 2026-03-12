@@ -1,23 +1,24 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
-
-import { Button, TextInput, View } from 'react-native';
-import showAlert, { ALERT_TYPES } from '../utils/alert';
 import style from '../utils/add-register-room.module.css';
 
-import { addingRoom as addingRoomAction } from '../../reducers/index';
-
-import { API_URL } from '../utils/const';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { TextInput, View } from 'react-native';
 
 import { IconButton } from '../utils/button';
 
+import showAlert, { ALERT_TYPES } from '../utils/alert';
+import { API_URL } from '../utils/const';
 
-function AddingRoomModal({ toggleRoomModal, socket, store, addingRoom }) {
+import { addRoom as addRoomAction } from '../../reducers/index';
+
+function AddingRoomModal({ toggleRoomModal, socket, store, addRoom, navigation }) {
     const [roomName, setRoomName] = useState('');
     const [roomPin, setRoomPin] = useState('');
 
+
     return (
         <View style={style.body}>
+
             <TextInput
                 onChangeText={setRoomName}
                 value={roomName}
@@ -42,7 +43,7 @@ function AddingRoomModal({ toggleRoomModal, socket, store, addingRoom }) {
                 backgroundColor="#fff"
                 additionalStyleClass={{ color: 'black' }}
                 imageColor="black"
-                onPress={() => createNewRoom(roomName, roomPin, addingRoom, store, toggleRoomModal)}
+                onPress={() => createNewRoom(roomName, roomPin, addRoom, store, toggleRoomModal)}
             />
 
             <IconButton
@@ -56,7 +57,7 @@ function AddingRoomModal({ toggleRoomModal, socket, store, addingRoom }) {
     );
 }
 
-function createNewRoom(name, pin, addingRoom, store, toggleRoomModal) {
+function createNewRoom(name, pin, addRoom, store, toggleRoomModal) {
     let isExists = false;
 
     store.rooms.map(room => {
@@ -86,7 +87,7 @@ function createNewRoom(name, pin, addingRoom, store, toggleRoomModal) {
                 })
                     .then(res => res.json())
                     .then(() => {
-                        addingRoom(name);
+                        addRoom(name);
 
                         showAlert({
                             alertType: ALERT_TYPES.SUCCESS,
@@ -103,7 +104,7 @@ function createNewRoom(name, pin, addingRoom, store, toggleRoomModal) {
                     })
             }
             else if (data.status === 'Success') {
-                addingRoom(name);
+                addRoom(name);
 
                 showAlert({
                     alertType: ALERT_TYPES.SUCCESS,
@@ -118,7 +119,17 @@ function createNewRoom(name, pin, addingRoom, store, toggleRoomModal) {
                     alertBody: data.status,
                 });
             }
-        });
+        })
+        .catch(err => {
+            console.log(err);
+
+            navigation.navigate('Home');
+            showAlert({
+                alertType: ALERT_TYPES.DANGER,
+                alertTitle: 'Error!',
+                alertBody: 'Something went wrong! (Please try again later -> Network Problem)',
+            });
+        })
 }
 
 function roomSendFetchWithMethod({ name, pin, creator, method }) {
@@ -142,7 +153,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    addingRoom: addingRoomAction
+    addRoom: addRoomAction
 };
 
 export default connect(

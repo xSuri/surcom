@@ -1,3 +1,5 @@
+import style from './utils/global.module.css';
+
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
@@ -6,11 +8,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text, TextInput, View } from 'react-native';
 import { IconButton } from './utils/button';
 import showAlert, { ALERT_TYPES } from './utils/alert';
-import style from './utils/global.module.css';
 
 import { API_URL, API_URLS, STATUTS, SCREEN_ROUTES } from './utils/const';
 
 import { signIn as signInAction } from '../reducers/index';
+import { post } from './utils/network';
 
 
 function LoginPage({ navigation, signIn }) {
@@ -22,10 +24,16 @@ function LoginPage({ navigation, signIn }) {
     return (
         <View style={style.body}>
             <View style={style.view}>
-                <View><Text style={style.headerText}>Login Page</Text></View>
+                <View>
+                    <Text style={style.headerText}>
+                        Login Page
+                    </Text>
+                </View>
 
 
-                <Text style={style.textWhite}>Login: </Text>
+                <Text style={style.textWhite}>
+                    Login:
+                </Text>
 
                 <TextInput
                     onChangeText={(text) => setNick(text)}
@@ -36,7 +44,9 @@ function LoginPage({ navigation, signIn }) {
                     selectTextOnFocus={isUnlocked}
                 />
 
-                <Text style={style.textWhite}>Pin: </Text>
+                <Text style={style.textWhite}>
+                    Pin:
+                </Text>
 
                 <TextInput
                     onChangeText={(text) => setPin(text)}
@@ -126,18 +136,16 @@ function LoginPage({ navigation, signIn }) {
 }
 
 function login({ nick, pin }) {
-    return fetch(API_URL + API_URLS['login'], {
-        headers: {
-            "Content-Type": "application/json"
-        },
-        method: 'POST',
-        body: JSON.stringify({
-            nick: nick,
-            pin: pin
-        })
-
+    return post({
+        url: API_URL + API_URLS['login'],
+        body: JSON.stringify(
+            {
+                nick: nick,
+                pin: pin
+            }
+        ),
     });
-}
+};
 
 const mapDispatchToProps = {
     signIn: signInAction
